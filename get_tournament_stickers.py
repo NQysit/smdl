@@ -53,8 +53,10 @@ url = ('http://steamcommunity.com/market/search/'
        '&count={items_per_page}'
        '&sort_column=name&sort_dir=asc')
 
-if not os.path.exists('stickers'):
-    os.mkdir('stickers')
+path = os.path.join('stickers', tournaments[id_tournament])
+
+if not os.path.exists(path):
+    os.makedirs(path)
 
 for n_page in range(total_pages):
 
@@ -82,18 +84,18 @@ for n_page in range(total_pages):
 
         if name not in stickers:
 
-            path = 'stickers/{name}.png'.format(name=name.split('|')[1].strip())
-
             stickers[name] = {
                 'market_url': market_url,
                 'img_url': img_url
             }
 
-            if not os.path.isfile(path):
-                rq = requests.get(img_url, headers={
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'
-                })
-                open(path, mode='wb').write(rq.content)
+            rq = requests.get(img_url, headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'
+            })
+
+            file_name = '{name}.png'.format(name=name.split('|')[1].strip())
+
+            open(os.path.join(path, file_name), mode='wb').write(rq.content)
 
             time.sleep(5)
 
